@@ -1,0 +1,79 @@
+:: Bailey's piggy_banks
+<<if $Baileys_money is undefined>>
+	<<set $Baileys_money to random(10000, 100000) * Time.days>> 
+	<<set $Baileys_piggy_banks_visited to Time.days>>
+	<<if $debug is 1>> 
+		Baileys_money= <<printmoney $Baileys_money>><br>
+	<</if>>
+<<else>>
+	<<set _visited to Time.days - 7>>
+	<<if _visited gte $Baileys_piggy_banks_visited>>
+		<<set $Baileys_money += $Baileys_money*random(-0.5, 0.5)>>
+		<<set $Baileys_piggy_banks_visited to Time.days>>
+	<</if>>
+	<<if $debug is 1>> 
+		Baileys_money= <<printmoney $Baileys_money>><br>
+		是否過了一週？=
+		<<if _visited gte $Baileys_piggy_banks_visited>>
+			是 "_visited="_visited<br>
+		<<else>>
+			否 "_visited="_visited<br>
+		遊戲開始過了<<print Time.days>>天 <br>
+		<</if>>
+	<</if>>	
+<</if>>	
+
+<<if Time.hour lte 6 >>
+	<<if $visited_today isnot Time.days>>
+		現在是半夜，也許你可以嘗試撬開貝利的小金庫？<br>
+		<<set $lock to random(-100, 1001)>>
+		<<set $visited_today to Time.days>> <!--鎖定今日的撬鎖難度-->
+		<<lockpickicon>><<link [[嘗試撬開貝利的小金庫(0:10)|Bailey's piggy_banks]]>><<set $lockpicking_tody to Time.days>><<pass 10>><<crimeUp 20 "trespassing">><</link>><<crime "trespassing">> 
+		<br>
+	<<elseif $lockpicking_tody isnot Time.days>>
+		現在是半夜，也許你可以嘗試撬開貝利的小金庫？<br>
+		<<lockpickicon>><<link [[嘗試撬開貝利的小金庫(0:10)|Bailey's piggy_banks]]>><<set $lockpicking_tody to Time.days>><<pass 10>><<crimeUp 20 "trespassing">><</link>><<crime "trespassing">> 
+		<br><!--$lockpicking_tody用於鎖定是否撬過小金庫-->
+	<<elseif $lockpicking_tody is Time.days >> 
+		你正蹲在貝利的小金庫前，
+		<<if currentSkillValue('skulduggery') gte $lock>>
+			你成功撬開貝利的小金庫<br>
+			<<link [[拿走金庫里的錢|Bailey's Office]]>><<crimeUp 10 "thievery">><</link>><<crime "thievery">><br>
+		<<else>>
+			<<if $lock lt 1000>>
+				<span class="red">这把锁超出了你的能力范围。</span><<skulduggeryrequired>>
+				<br>
+			<<elseif $lock gt 1000>>
+				<span class="red">这把锁似乎需要特殊的方式才能打開。</span>
+				<br>
+			<<elseif $lock is 0>>
+				<span class="green">貝利似乎忘了上鎖。</span>
+				<br>
+				<<link [[拿走金庫里的錢|Bailey's Office]]>><<crimeUp 10 "thievery">><</link>><<crime "thievery">><br>
+			<</if>>	
+		<</if>>	
+	<</if>>	
+	<<if $debug is 1>> 
+		現在時間<<print Time.hour>>點 <br>
+		撬鎖難度：$lock <br>
+		今日是否撬過貝利的小金庫？:
+		<<if $lockpicking_tody is Time.days>>
+			是<br>
+		<<else>>	
+			否<br>
+		<</if>>	
+	<</if>>	
+	<<link [[离开|Bailey's Office]]>><<endevent>><</link>>
+	<br>
+<<else>>
+	<<if Time.hour gt 6 and Time.hour lt 10 >>
+		貝利就在旁邊呢！你不能明目張膽的撬開貝利的金庫而不被發現。<br>
+	<<else>>
+		現在是白天，你不能明目張膽的撬開貝利的金庫而不被發現，等夜深人靜後再來吧！<br>
+	<</if>>	
+	<<if $debug is 1>> 
+		現在時間<<print Time.hour>>點 <br>
+	<</if>>
+	<<link [[离开|Bailey's Office]]>><<endevent>><</link>>
+	<br>
+<</if>>

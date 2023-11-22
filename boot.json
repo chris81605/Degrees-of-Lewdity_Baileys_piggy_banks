@@ -1,0 +1,49 @@
+{
+  "name": "Bailey's piggy_banks",
+  "version": "0.0.3",
+  "styleFileList": [],
+  "scriptFileList": [],
+  "tweeFileList": [
+    "Bailey's piggy_banks.twee"
+  ],
+  "imgFileList": [],
+  "additionFile": [
+    "addon-replace/core_code.txt",
+    "addon-replace/log.txt",
+    "addon-replace/swich.txt",
+    "readme.txt",
+    "preview.jpg"
+  ],
+  "addonPlugin": [
+    {
+      "modName": "TweeReplacer",
+      "addonName": "TweeReplacerAddon",
+      "modVersion": "1.0.0",
+      "params": [
+        {
+          "passage": "Bailey's Office",
+          "findString": "<<if _options isnot 2>>",
+          "replace": "<<lockpickicon>><<link [[查看貝利的小金庫|Bailey's piggy_banks]]>><</link>><br>\n<<if _options isnot 2>>"
+        }
+      ]
+    }
+  ],
+  "dependenceInfo": [
+    {
+      "modName": "ModLoader",
+      "version": ">=1.1.0"
+    },
+    {
+      "modName": "ModLoader DoL ImageLoaderHook",
+      "version": ">=1.0.0"
+    },
+    {
+      "modName": "TweeReplacer",
+      "version": ">=1.0.0"
+    },
+    {
+      "modName": "ReplacePatcher",
+      "version": ">=1.0.0"
+    }
+  ]
+}
