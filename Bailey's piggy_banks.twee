@@ -1,11 +1,11 @@
 :: Bailey's piggy_banks
 <<if $Baileys_money is undefined>> 								<!--第一次觸發事件初始化貝利存款-->
-	<<set $Baileys_money to random(10000, 100000) * Time.days>> 
-	<<set $Baileys_money_refresh to Time.days +7>>
-	<<set $Baileys_PC_rent_money to $rentmoney>>
-	<<set $Baileys_money_init_date to Time.days>>
-	<<if $renttime gte 5>>
-		<<set $PC_rent_money_take_back to $Baileys_PC_rent_money>>
+	<<set $Baileys_money to random(10000, 100000) * (Time.days + random(30, 90))>> <!--(Time.days + random(30, 90)防止開新檔第0天就去撬金庫導致貝利存款為0-->
+	<<set $Baileys_money_refresh to Time.days +7>>		<!--下一次被利存款刷新日-->
+	<<set $Baileys_PC_rent_money to $rentmoney>>		<!--貝利打算收取的租金-->
+	<<set $Baileys_money_init_date to Time.days>>		<!--本次貝利存款刷新日，用於下次計算刷新-->
+	<<if $renttime gte 5 and Time.days gt 7>>			<!--被貝利收租金三日內可取回刷新，須至少被收取一次(被賣掉也算)-->
+		<<set $PC_rent_money_take_back to $Baileys_PC_rent_money>>	<!--被貝利收租金三日內可取回，金額初始化-->
 	<<else>>
 		<<set $PC_rent_money_take_back to 0>>
 	<</if>>	
@@ -21,17 +21,17 @@
 				<<set $Baileys_money -= Math.round(($Baileys_money * 0.01))>>
 			<</if>>
 		<</for>>	
-		<<if $Baileys_money is 0>>								<!--防止貝利的錢被偷光後無法再生-->
-			<<set $Baileys_money to random(10000, 100000) * _Baileys_money_init_pass>>
+		<<if $Baileys_money lte 0>>								<!--防止貝利的錢被偷光後無法再生-->
+			<<set $Baileys_money to random(10000, 100000) * (Time.days + random(30, 90)) * _Baileys_money_init_pass>>
 		<</if>>	
-		<<if $renttime gte 5 >>									<!--被貝利收租金三日內可取回刷新-->
+		<<if $renttime gte 5 >>									<!--被貝利收租金三日內可取回刷新(被賣掉也算)-->
 			<<set $Baileys_money += $Baileys_PC_rent_money>>
 			<<set $PC_rent_money_take_back to $Baileys_PC_rent_money>>
 		<<else>>
 			<<set $Baileys_PC_rent_money to $rentmoney>>
 		<</if>>	
-		<<set $Baileys_money_refresh to Time.days + 7>>
-		<<set $Baileys_money_init_date to Time.days>>
+		<<set $Baileys_money_refresh to Time.days + 7>>			<!--設定下一次被利存款刷新日-->
+		<<set $Baileys_money_init_date to Time.days>>			<!--本次貝利存款刷新日，用於下次計算刷新-->
 		
 	<</if>>
 <</if>>	
@@ -46,9 +46,9 @@
 		<<set $lock to random(400, 1100)>>	<!--初始化解鎖難度-->
 		<<set $unlock to 0>>				<!--初始化今日貝利是否忘記上鎖-->
 		<<set $taken_Baileys_money to 0>>	<!--初始化拿過貝利的錢-->
-		<<set $visited_today to Time.days>> <!--鎖定今日的撬鎖難度-->
-		<<set $lockpicking_tody_stage to 0>> <!--初始化嘗試撬開金庫，防止無限刷詭術-->
-		<<set _random_seed to 1002>>
+		<<set $visited_today to Time.days>> <!--用於鎖定今日的撬鎖難度-->
+		<<set $lockpicking_tody_stage to 0>> <!--用於初始化嘗試撬開金庫，防止無限刷詭術-->
+		<<set _random_seed to 1002>>		<!--計算忘記上鎖機率，待優化-->
 		<<if $rng lte 50 >>				
 			<<set _random_seed to (_random_seed - $skulduggery)>>
 			<<set _random_unlock to (1, _random_seed)>>
@@ -58,7 +58,7 @@
 		<</if>>	
 		<<lockpickicon>>
 		<<link [[嘗試撬開貝利的小金庫(0:10)|Bailey's piggy_banks]]>>
-		    <<set $lockpicking_tody to Time.days>>
+		    <<set $lockpicking_tody to Time.days>>	<!--用於鎖定當日初始化參數，防止無限刷新-->
 		    <<pass 10>>
 		    <<crimeUp 20 "trespassing">>
 		<</link>><<crime "trespassing">> 
@@ -66,17 +66,16 @@
 	<<elseif $lockpicking_tody isnot Time.days and Time.hour lt 6>>
 		現在是半夜，也許你可以嘗試撬開貝利的小金庫？
 		<<if $skulduggery lt 1000>>
-			<<gskulduggery>>
+			<<gskulduggery>>		<!--顯示犯罪行為"非法入侵"-->
 		<</if>>
 		<br>		
 		<<lockpickicon>>
 		<<link [[嘗試撬開貝利的小金庫(0:10)|Bailey's piggy_banks]]>>
-		    <<set $lockpicking_tody to Time.days>>
+		    <<set $lockpicking_tody to Time.days>>		<!--$lockpicking_tody用於鎖定是否撬過小金庫-->
 		    <<pass 10>>
 		    <<crimeUp 20 "trespassing">>
 		<</link>><<crime "trespassing">> 
 		<br>					
-		<!--$lockpicking_tody用於鎖定是否撬過小金庫-->
 	<<elseif $lockpicking_tody is Time.days and Time.hour lt 6>> 
 		你正蹲在貝利的小金庫前，
 		<<if currentSkillValue('skulduggery') gte $lock and $unlock is 0>>
@@ -84,7 +83,7 @@
 			<<if $skulduggery lt 1000 and $lockpicking_tody_stage isnot Time.days>>
 				<span class="gold"> 你學到一些詭術上的技巧。</span>
 				<<set $skulduggery += 10>>
-				<<set $lockpicking_tody_stage to Time.days>>
+				<<set $lockpicking_tody_stage to Time.days>>		<!--鎖定今日已嘗試撬開金庫，防止無限刷詭術-->
 			<</if>>
 			<br>
 			<<link [[拿走金庫里的錢|Tack Bailey's money]]>><<crimeUp 10 "thievery">><</link>><<crime "thievery">><br>

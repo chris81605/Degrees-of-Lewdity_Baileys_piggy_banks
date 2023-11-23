@@ -6,22 +6,25 @@
 	失而復得的感覺非常好<<llstress>><<stress -50>><br>
 <</if>>	
 <<if $Tack_Baileys_money_init isnot Time.days>>								<!--判斷今日是否初始化過小金庫的錢-->
-	<<set _random_seed to random(1,10)>>									<!--產生隨機數給當前小金庫有多少錢-->
-	<<set _Baileys_money to Math.round(($Baileys_money / _random_seed))>> 	<!--取整數-->	
-	<<if _Baileys_money lt 100>>											<!--防止計算後出現小於1的情況-->
+	<<if $Baileys_money lt 100>>											<!--防止計算後出現小於1的情況-->
 		<<set _Baileys_money to 1000>>
 		<<set $Baileys_money to 1000>>
+	<<else>>
+		<<set _random_seed to random(1,10)>>									<!--產生隨機數給當前小金庫有多少錢-->
+		<<set _Baileys_money to Math.round(($Baileys_money / _random_seed))>> 	<!--取整數-->	
 	<</if>>	
 	<<set $Tack_Baileys_money_init to Time.days>>							<!--鎖定金庫里錢的金額-->
 <</if>>	
 <<if $Baileys_money isnot 0 and $rng gte 25>>
-	<<if _Baileys_money gte 300000>>
+	<<if _Baileys_money gte 500000>>
 		你將金庫裏頭的錢一掃而空，你獲得了<<printmoney _Baileys_money>>，一想到平時貝利是如何敲詐你的，當<<nnpc_his "Bailey">>發現金庫的錢消失不見氣急敗壞的模樣
 		，你的心情大好。<<llstress>><<stress -20>><br>
-	<<elseif _Baileys_money gte 100000>>
+	<<elseif _Baileys_money gte 300000>>
 		金庫裡有許多錢，你獲得了<<printmoney _Baileys_money>>，滿載而歸讓你情緒高漲。<<lstress>><<stress -10>><br>
+	<<elseif _Baileys_money gte 100000>>
+		你把金庫里的錢全收進口袋，你獲得了<<printmoney _Baileys_money>>，收穫還不錯。<<lstress>><<stress -5>><br>
 	<<elseif _Baileys_money gte 50000>>
-		你把金庫里的錢全收進口袋，你獲得了<<printmoney _Baileys_money>>，收穫還行。<<lstress>><<stress -5>><br>
+		你把金庫里的錢全收進口袋，口袋甚至沒裝滿，你獲得了<<printmoney _Baileys_money>>，收穫還行。<<lstress>><<stress -3>><br>	
 	<<elseif _Baileys_money gte 10000>>
 		金庫裏頭只有少許的錢，你獲得了<<printmoney _Baileys_money>>，或許你得考慮去打劫其他地方？<br>
 	<<elseif _Baileys_money lt 10000>>
