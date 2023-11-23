@@ -2,7 +2,7 @@
 <<if $renttime gte 5 and $PC_rent_money_take_back isnot 0>>					<!--被貝利收租金三日內可取回-->
 	<<set _Baileys_money += $PC_rent_money_take_back>>
 	<<set $PC_rent_money_take_back to 0>>
-	你在金庫裡發現了熟悉的東西，<span class="gold">那是你上繳給貝利的租金！</span>
+	你在金庫裏發現了熟悉的東西，<span class="gold">那是你上繳給貝利的租金！</span>
 	失而復得的感覺非常好<<llstress>><<stress -50>><br>
 <</if>>	
 <<if $Tack_Baileys_money_init isnot Time.days>>								<!--判斷今日是否初始化過小金庫的錢-->
@@ -23,9 +23,9 @@
 	<<elseif _Baileys_money gte 50000>>
 		你把金庫里的錢全收進口袋，你獲得了<<printmoney _Baileys_money>>，收穫還行。<<lstress>><<stress -5>><br>
 	<<elseif _Baileys_money gte 10000>>
-		金庫裡只有少許的錢，你獲得了<<printmoney _Baileys_money>>，或許你得考慮去打劫其他地方？<br>
+		金庫裏頭只有少許的錢，你獲得了<<printmoney _Baileys_money>>，或許你得考慮去打劫其他地方？<br>
 	<<elseif _Baileys_money lt 10000>>
-		太慘了！金庫裡只有少許的銅板，貝利該不會還有其他地方藏錢吧？<br>
+		太慘了！金庫裏頭只有少許的銅板，貝利該不會還有其他地方藏錢吧？<br>
 	<</if>>	
 <<else>>	
 	<span class="red">金庫裏頭空空如也</span>，貝利也有沒錢的時候嗎？肯定是藏到其他地方去了！<br>
