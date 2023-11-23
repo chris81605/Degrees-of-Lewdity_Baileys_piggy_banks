@@ -1,0 +1,52 @@
+:: Tack Bailey's money
+<<if $renttime gte 5 and $PC_rent_money_take_back isnot 0>>					<!--被貝利收租金三日內可取回-->
+	<<set _Baileys_money += $PC_rent_money_take_back>>
+	<<set $PC_rent_money_take_back to 0>>
+	你在金庫裏發現了熟悉的東西，<span class="gold">那是你上繳給貝利的租金！</span>
+	失而復得的感覺非常好<<llstress>><<stress -50>><br>
+<</if>>	
+<<if $Tack_Baileys_money_init isnot Time.days>>								<!--判斷今日是否初始化過小金庫的錢-->
+	<<set _random_seed to random(1,10)>>									<!--產生隨機數給當前小金庫有多少錢-->
+	<<set _Baileys_money to Math.round(($Baileys_money / _random_seed))>> 	<!--取整數-->	
+	<<if _Baileys_money lt 100>>											<!--防止計算後出現小於1的情況-->
+		<<set _Baileys_money to 1000>>
+		<<set $Baileys_money to 1000>>
+	<</if>>	
+	<<set $Tack_Baileys_money_init to Time.days>>							<!--鎖定金庫里錢的金額-->
+<</if>>	
+<<if $Baileys_money isnot 0 and $rng gte 25>>
+	<<if _Baileys_money gte 300000>>
+		你將金庫裏頭的錢一掃而空，你獲得了<<printmoney _Baileys_money>>，一想到平時貝利是如何敲詐你的，當<<nnpc_his "Bailey">>發現金庫的錢消失不見氣急敗壞的模樣
+		，你的心情大好。<<llstress>><<stress -20>><br>
+	<<elseif _Baileys_money gte 100000>>
+		金庫裡有許多錢，你獲得了<<printmoney _Baileys_money>>，滿載而歸讓你情緒高漲。<<lstress>><<stress -10>><br>
+	<<elseif _Baileys_money gte 50000>>
+		你把金庫里的錢全收進口袋，你獲得了<<printmoney _Baileys_money>>，收穫還行。<<lstress>><<stress -5>><br>
+	<<elseif _Baileys_money gte 10000>>
+		金庫裏頭只有少許的錢，你獲得了<<printmoney _Baileys_money>>，或許你得考慮去打劫其他地方？<br>
+	<<elseif _Baileys_money lt 10000>>
+		太慘了！金庫裏頭只有少許的銅板，貝利該不會還有其他地方藏錢吧？<br>
+	<</if>>	
+<<else>>	
+	<span class="red">金庫裏頭空空如也</span>，貝利也有沒錢的時候嗎？肯定是藏到其他地方去了！<br>
+<</if>>
+<<set $money += _Baileys_money>>										<!--偷走貝利的錢！-->
+<<set $Baileys_money -= _Baileys_money>>
+<<set $taken_Baileys_money to 1>>
+<<getouticon>><<link [[离开|Bailey's Office]]>><<endevent>><</link>><br>
+
+
+<!--debug用-->
+<<if $debug is 1>>
+	金庫裏頭現在有：<<printmoney _Baileys_money>> _Baileys_money<br>
+	RNG(小於25則金庫裡沒錢)：$rng<br>
+	<<set _Baileys_money_temp to $Baileys_money + _Baileys_money>>
+	Baileys_moneye共有= <<printmoney _Baileys_money_temp>> _Baileys_money_temp ，被你清空金庫後剩 <<printmoney $Baileys_money>> $Baileys_money<br>
+	renttime=$renttime<br>
+	PC_rent_money_take_back=<<printmoney $PC_rent_money_take_back>> $PC_rent_money_take_back<br>
+	random_seed= _random_seed<br>
+	<<link [[給貝利塞點錢(debug)|Bailey's Office]]>><<set $Baileys_money += 10000>><</link>><br>
+	<<link [[貝利沒錢了(debug)|Bailey's Office]]>><<set $Baileys_money to 0>><</link>><br>
+	<<link [[RNG_to_26(debug)|$passage]]>><<set $rng to 26>><</link>><br>
+	<<link [[RNG_to_24(debug)|$passage]]>><<set $rng to 24>><</link>><br>
+<</if>>

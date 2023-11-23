@@ -1,9 +1,10 @@
 {
   "name": "Bailey's piggy_banks",
-  "version": "0.0.3",
+  "version": "0.1.1",
   "styleFileList": [],
   "scriptFileList": [],
   "tweeFileList": [
+    "Tack Baileys money.twee",
     "Bailey's piggy_banks.twee"
   ],
   "imgFileList": [],
@@ -11,8 +12,7 @@
     "addon-replace/core_code.txt",
     "addon-replace/log.txt",
     "addon-replace/swich.txt",
-    "readme.txt",
-    "preview.jpg"
+    "readme.md"
   ],
   "addonPlugin": [
     {
