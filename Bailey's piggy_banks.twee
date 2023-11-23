@@ -132,7 +132,7 @@
 	<<else>>	
 		否<br>
 	<</if>>
-	上一次刷新被利存款：$Baileys_money_init_date<br>
+	上一次刷新贝利存款：$Baileys_money_init_date<br>
 	是否過了一週(刷新貝利存存款)？=
 	<<if Time.days gte $Baileys_money_refresh>>
 		是 <br>
