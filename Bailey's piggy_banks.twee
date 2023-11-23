@@ -147,7 +147,7 @@
 		否<br>
 	<</if>>
 	lockpicking進度：$lockpicking_tody_stage <br>
-	上一次刷新被利存款：$Baileys_money_init_date<br>
+	上一次刷新貝利存款：$Baileys_money_init_date<br>
 	是否過了一週(刷新貝利存存款)？=
 	<<if Time.days gte $Baileys_money_refresh>>
 		是 <br>
