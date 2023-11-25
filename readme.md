@@ -6,9 +6,13 @@
   - [官方 Discord][discord]
   - [遊戲源碼倉庫][gitgud]
 
+# 需求  
+* 需要搭配[MODLOADER][JML]使用  
+* 需搭配[Degrees of Lewdity 中文本地化][DOLCN]使用  
+
 # 貝利的小金庫簡介  
-**Degrees-of-Lewdity 新增要素MOD：**  
-* **在貝利辦公室、家中新增 “貝利的小金庫”，PC可於特定時段去嘗試撬開它爆貝利金幣。**  
+**為Degrees-of-Lewdity 新增要素：**  
+* 在貝利辦公室、家中新增 “貝利的小金庫”，PC可於特定時段去嘗試撬開它爆貝利金幣。
 
 # 更新日誌  
 ## 0.2.0  
