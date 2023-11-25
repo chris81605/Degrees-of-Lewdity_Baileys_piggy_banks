@@ -1,5 +1,15 @@
-# 貝利的小金庫  
-**在貝利辦公室、家中新增 “貝利的小金庫”，PC可於特定時段去嘗試撬開它爆貝利金幣。**  
+# Degrees-of-Lewdity
+- <img decoding="async" src="https://gitgud.io/uploads/-/system/user/avatar/9096/avatar.png" width="24" alt=""> <b>遊戲作者</b> $\color{purple} {Vrelnir}$
+  - [Vrelnir 的blog][blog]
+  - [英文遊戲維基][wiki-en]
+  - [中文英文遊戲維基][wiki-cn]
+  - [官方 Discord][discord]
+  - [遊戲源碼倉庫][gitgud]
+
+# 貝利的小金庫簡介  
+**Degrees-of-Lewdity 新增要素MOD：**  
+* **在貝利辦公室、家中新增 “貝利的小金庫”，PC可於特定時段去嘗試撬開它爆貝利金幣。**  
+
 # 更新日誌  
 ## 0.2.0  
 1.優化代碼結構，將計算與判斷代碼獨立至"**Widgets Bailey's piggy_banks**"，方便後續調用  
@@ -40,3 +50,12 @@
             撬貝利家的小金庫可能被貝利發現，發現後會被貝利賣掉，愛情足夠高則被留下來當RBQ。(可選擇)  
             變成貝利的RBQ後，貝利每晚會嘗試將在外遊蕩的PC抓回家撅。  
             變成貝利的RBQ後，可以請貝利帶你去鎮上的任何地方。  
+
+[blog]: https://vrelnir.blogspot.com/
+[wiki-en]: https://degreesoflewdity.miraheze.org/wiki
+[wiki-cn]: https://degreesoflewditycn.miraheze.org/wiki
+[gitgud]: https://gitgud.io/Vrelnir/degrees-of-lewdity/-/tree/master/
+[discord]: https://discord.gg/VznUtEh
+[JML]:https://github.com/Lyoko-Jeremie/sugarcube-2-ModLoader  
+[DOLCN]:https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization  
+ 
