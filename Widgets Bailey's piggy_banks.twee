@@ -14,7 +14,7 @@
 	<<else>>
 		<<if Time.days gte $Baileys_money_refresh >>				<!--七天後觸發更新貝利存款-->
 			<<set _Baileys_money_init_pass_temp to Time.days>>
-			<<set _Baileys_money_init_pass to _Baileys_money_init_pass_temp - $Baileys_money_init_date>>	<!--計算舉離上次刷新後過了多少天-->
+			<<set _Baileys_money_init_pass to _Baileys_money_init_pass_temp - $Baileys_money_init_date>>	<!--計算距離上次刷新後過了多少天-->
 			<<for _i to _Baileys_money_init_pass; _i gt 0 ; _i-->>  
 				<<set _random_plus to random(0, 2)>>
 				<<if _random_plus lte 1>>											<!--貝利存款每日隨機增減-->
