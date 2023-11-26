@@ -1,6 +1,6 @@
 {
   "name": "Bailey's piggy_banks",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "styleFileList": [],
   "scriptFileList": [],
   "tweeFileList": [
@@ -13,7 +13,8 @@
     "addon-replace/core_code.txt",
     "addon-replace/log.txt",
     "addon-replace/swich.txt",
-    "readme.md"
+    "readme.md",
+	"LICENSE.txt"
   ],
   "addonPlugin": [
     {

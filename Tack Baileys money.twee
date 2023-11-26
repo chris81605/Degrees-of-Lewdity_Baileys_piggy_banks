@@ -6,14 +6,7 @@
 	失而復得的感覺非常好<<llstress>><<stress -50>><br>
 <</if>>	
 <<if $Tack_Baileys_money_init isnot Time.days>>								<!--判斷今日是否初始化過小金庫的錢-->
-	<<if $Baileys_money lt 100>>											<!--防止計算後出現小於1的情況-->
-		<<set _Baileys_money to 1000>>
-		<<set $Baileys_money to 1000>>
-	<<else>>
-		<<set _random_seed to random(1,10)>>									<!--產生隨機數給當前小金庫有多少錢-->
-		<<set _Baileys_money to Math.round(($Baileys_money / _random_seed))>> 	<!--取整數-->	
-	<</if>>	
-	<<set $Tack_Baileys_money_init to Time.days>>							<!--鎖定金庫里錢的金額-->
+    <<Tack_baileys_money_init>> <!--初始化今日小金庫的錢-->
 <</if>>	
 <<if $Baileys_money isnot 0 and $rng gte 25>>
 	<<if _Baileys_money gte 500000>>
@@ -33,9 +26,11 @@
 <<else>>	
 	<span class="red">金庫裏頭空空如也</span>，貝利也有沒錢的時候嗎？肯定是藏到其他地方去了！<br>
 <</if>>
-<<set $money += _Baileys_money>>										<!--偷走貝利的錢！-->
-<<set $Baileys_money -= _Baileys_money>>
-<<set $taken_Baileys_money to 1>>
+<<if _Baileys_money gt 0>>           <!--防止貝利金庫裡的錢變數未定義或不為數字時造成玩家存款變成Nan-->
+    <<set $money += _Baileys_money>>										<!--偷走貝利的錢！-->
+    <<set $Baileys_money -= _Baileys_money>>
+    <<set $taken_Baileys_money to 1>>
+<</if>>
 <<getouticon>><<link [[离开|Bailey's Office]]>><<endevent>><</link>><br>
 
 
@@ -44,7 +39,7 @@
 	金庫裏頭現在有：<<printmoney _Baileys_money>> _Baileys_money<br>
 	RNG(小於25則金庫裡沒錢)：$rng<br>
 	<<set _Baileys_money_temp to $Baileys_money + _Baileys_money>>
-	Baileys_moneye共有= <<printmoney _Baileys_money_temp>> _Baileys_money_temp ，被你清空金庫後剩 <<printmoney $Baileys_money>> $Baileys_money<br>
+	貝利的存款共有= <<printmoney _Baileys_money_temp>> _Baileys_money_temp ，被你清空金庫後剩 <<printmoney $Baileys_money>> $Baileys_money<br>
 	renttime=$renttime<br>
 	PC_rent_money_take_back=<<printmoney $PC_rent_money_take_back>> $PC_rent_money_take_back<br>
 	random_seed= _random_seed<br>

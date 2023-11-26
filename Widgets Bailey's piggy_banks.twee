@@ -54,58 +54,73 @@
 	<</if>>	
 <</widget>>	
 
+<<widget "Tack_baileys_money_init">>  <!--初始化貝利小金庫裡的錢用widget-->
+    <<if $Baileys_money lt 100>>											<!--防止計算後出現小於1的情況-->
+		<<set _Baileys_money to 1000>>
+		<<set $Baileys_money to 1000>>
+	<<else>>
+		<<set _random_seed to random(1,10)>>									<!--產生隨機數給當前小金庫有多少錢-->
+		<<set _Baileys_money to Math.round(($Baileys_money / _random_seed))>> 	<!--取整數-->	
+	<</if>>	
+	<<set $Tack_Baileys_money_init to Time.days>>							<!--鎖定金庫里錢的金額-->
+	
+<</widget>>
+
 <<widget "steal_Baileys_money">>		<!--顯示 撬開貝利的小金庫用 widget-->
 	<<if $visited_today isnot Time.days>>
 		<<lock_init>>		<!--小金庫上鎖狀態初始化-->
 	<</if>>
-	<<if $lockpicking_tody isnot Time.days>>
-		<<lockpickicon>>
-		<<link [[嘗試撬開貝利的小金庫(0:10)|Bailey's piggy_banks]]>>
-			<<set $lockpicking_tody to Time.days>>	<!--用於鎖定當日初始化參數，防止無限刷新-->
-			<<pass 10>>
-			<<crimeUp 20 "trespassing">>
-		<</link>><<crime "trespassing">> 
+	
+	<<if $taken_Baileys_money isnot 0>>
+		你正蹲在貝利的小金庫前，你今日已經光顧過了，金庫裡連個銅板也沒給貝利留下來，改天再來吧！
 		<br>
-	<<elseif $lockpicking_tody is Time.days>> 
-		你正蹲在貝利的小金庫前，
-		<<if currentSkillValue('skulduggery') gte $lock and $unlock is 0>>
-			成功撬開貝利的小金庫
-			<<if $skulduggery lt 1000 and $lockpicking_tody_stage isnot Time.days>>
-				<span class="gold"> 你學到一些詭術上的技巧。</span>
-				<<set $skulduggery += 10>>
-				<<set $lockpicking_tody_stage to Time.days>>		<!--鎖定今日已嘗試撬開金庫，防止無限刷詭術-->
-			<</if>>
+	<<else>>
+		<<if $lockpicking_tody isnot Time.days>>
+			<<lockpickicon>>
+			<<link [[嘗試撬開貝利的小金庫(0:10)|Bailey's piggy_banks]]>>
+				<<set $lockpicking_tody to Time.days>>	<!--用於鎖定當日初始化參數，防止無限刷新-->
+				<<pass 10>>
+				<<crimeUp 20 "trespassing">>
+			<</link>><<crime "trespassing">> 
 			<br>
-			<<link [[拿走金庫里的錢|Tack Bailey's money]]>><<crimeUp 10 "thievery">><</link>><<crime "thievery">><br>
-		<<else>>
-			<<if currentSkillValue('skulduggery') lt $lock and $lock lte 1000 and $unlock is 0>>
-				撬了半天，鎖一點也沒有撬開的跡象，你不得不承認
-				<span class="red">你的能力不足已撬開它</span><<skulduggeryrequired>>
+		<<elseif $lockpicking_tody is Time.days>> 
+			你正蹲在貝利的小金庫前，
+			<<if currentSkillValue('skulduggery') gte $lock and $unlock is 0>>
+				成功撬開貝利的小金庫
 				<<if $skulduggery lt 1000 and $lockpicking_tody_stage isnot Time.days>>
 					<span class="gold"> 你學到一些詭術上的技巧。</span>
-					<<set $skulduggery += 5>>
-					<<set $lockpicking_tody_stage to Time.days>>
-				<</if>>
-				也許......，你可以嘗試看看附近有沒有甚麼轉開密碼鎖的提示？
-				<!--此處可新增撬鎖小遊戲(猜數字)-->
-			<<elseif $lock gt 1000 and $unlock is 0>>
-				撬了半天，你發現似乎有點不一樣，
-				<span class="red">需要特殊的方式解開。</span>
-				<<if $skulduggery lt 1000 and $lockpicking_tody_stage isnot Time.days>>
-					<span class="gold"> 你學到一些詭術上的技巧。</span>
-					<<set $skulduggery += 1>>
-					<<set $lockpicking_tody_stage to Time.days>>
+					<<set $skulduggery += 10>>
+					<<set $lockpicking_tody_stage to Time.days>>		<!--鎖定今日已嘗試撬開金庫，防止無限刷詭術-->
 				<</if>>
 				<br>
-				<!--此處可新增被貝利發現事件-->
-			<<elseif $unlock is 1>>
-				驚訝的發現，
-				<span class="green">貝利似乎忘了上鎖。</span>
-				<br>
-				<<link [[拿走金庫里的錢|Tack Bailey's money]]>><<crimeUp 10 "thievery">><<unset $unlock>><</link>><<crime "thievery">><br>
-			<<elseif $taken_Baileys_money is 1>>
-				里頭空空如也，啥也沒有。
-				<br>
+				<<link [[拿走金庫里的錢|Tack Bailey's money]]>><<crimeUp 10 "thievery">><</link>><<crime "thievery">><br>
+			<<else>>
+				<<if currentSkillValue('skulduggery') lt $lock and $lock lte 1000 and $unlock is 0>>
+					撬了半天，鎖一點也沒有撬開的跡象，你不得不承認
+					<span class="red">你的能力不足已撬開它</span><<skulduggeryrequired>>
+					<<if $skulduggery lt 1000 and $lockpicking_tody_stage isnot Time.days>>
+						<span class="gold"> 你學到一些詭術上的技巧。</span>
+						<<set $skulduggery += 5>>
+						<<set $lockpicking_tody_stage to Time.days>>
+					<</if>>
+					也許......，你可以嘗試看看附近有沒有甚麼轉開密碼鎖的提示？
+					<!--此處可新增撬鎖小遊戲(猜數字)-->
+				<<elseif $lock gt 1000 and $unlock is 0>>
+					撬了半天，你發現似乎有點不一樣，
+					<span class="red">需要特殊的方式解開。</span>
+					<<if $skulduggery lt 1000 and $lockpicking_tody_stage isnot Time.days>>
+						<span class="gold"> 你學到一些詭術上的技巧。</span>
+						<<set $skulduggery += 1>>
+						<<set $lockpicking_tody_stage to Time.days>>
+					<</if>>
+					<br>
+					<!--此處可新增被貝利發現事件-->
+				<<elseif $unlock is 1>>
+					驚訝的發現，
+					<span class="green">貝利似乎忘了上鎖。</span>
+					<br>
+					<<link [[拿走金庫里的錢|Tack Bailey's money]]>><<crimeUp 10 "thievery">><<unset $unlock>><</link>><<crime "thievery">><br>
+				<</if>>	
 			<</if>>	
 		<</if>>	
 	<</if>>	
