@@ -1,6 +1,6 @@
 :: Widgets Bailey's piggy_banks [widget]
 
-<<widget "Baileys_money">>									<!--初始化貝利存款及刷新存款用widget-->
+<<widget "Baileys_money_init">>									<!--初始化貝利存款及刷新存款用widget-->
 	<<if $Baileys_money is undefined>> 								<!--第一次觸發事件初始化貝利存款-->
 		<<set $Baileys_money to random(10000, 100000) * (Time.days + random(30, 90))>> <!--(Time.days + random(30, 90)防止開新檔第0天就去撬金庫導致貝利存款為0-->
 		<<set $Baileys_money_refresh to Time.days +7>>		<!--下一次被利存款刷新日-->
@@ -32,44 +32,108 @@
 			<<else>>
 				<<set $Baileys_PC_rent_money to $rentmoney>>
 			<</if>>	
-			<<set $Baileys_money_refresh to Time.days + 7>>			<!--設定下一次被利存款刷新日-->
+			<<set $Baileys_money_refresh to Time.days + 7>>			<!--設定下一次貝利存款刷新日-->
 			<<set $Baileys_money_init_date to Time.days>>			<!--本次貝利存款刷新日，用於下次計算刷新-->
 		<</if>>
 	<</if>>	
 <</widget>>
 
 <<widget "lock_init">>					<!--小金庫上鎖狀態初始化用 widget-->
-	<<set $lock to random(400, 1100)>>	<!--初始化解鎖難度-->
-	<<set $unlock to 0>>				<!--初始化今日貝利是否忘記上鎖-->
-	<<set $taken_Baileys_money to 0>>	<!--初始化拿過貝利的錢-->
-	<<set $visited_today to Time.days>> <!--用於鎖定今日的撬鎖難度-->
-	<<set $lockpicking_tody_stage to 0>> <!--用於初始化嘗試撬開金庫，防止無限刷詭術-->
-	<<set _random_seed to 1002>>		<!--計算忘記上鎖機率，待優化-->
-	<<if $rng lte 50 >>				
-		<<set _random_seed to (_random_seed - $skulduggery)>>
-		<<set _random_unlock to (1, _random_seed)>>
-		<<if _random_unlock lte 1 >>
-			<<set $unlock to 1>>	
-		<</if>> 	
+	<<if $visited_today isnot Time.days>>
+		<<set $lock to random(400, 1100)>>	<!--初始化解鎖難度-->
+		<<set $unlock to 0>>				<!--初始化今日貝利是否忘記上鎖-->
+		<<set $taken_Baileys_money to 0>>	<!--初始化拿過貝利的錢-->
+		<<set $visited_today to Time.days>> <!--用於鎖定今日的撬鎖難度-->
+		<<set $lockpicking_tody_stage to 0>> <!--用於初始化嘗試撬開金庫，防止無限刷詭術-->
+		<<set _random_seed to 1002>>		<!--計算忘記上鎖機率，待優化-->
+		<<if $rng lte 50 >>				
+			<<set _random_seed to (_random_seed - $skulduggery)>>
+			<<set _random_unlock to (1, _random_seed)>>
+			<<if _random_unlock lte 1 >>
+				<<set $unlock to 1>>	
+			<</if>> 	
+		<</if>>
 	<</if>>	
 <</widget>>	
 
-<<widget "Tack_baileys_money_init">>  <!--初始化貝利小金庫裡的錢用widget-->
-    <<if $Baileys_money lt 100>>											<!--防止計算後出現小於1的情況-->
-		<<set _Baileys_money to 1000>>
-		<<set $Baileys_money to 1000>>
+<<widget "bailey_suspect">>												<!--貝利的懷疑值計算及初始化用widget-->
+	<!--用法：
+		bailey_suspect init：執行初始化，計算每日懷疑值(懷疑值隨時間下降)
+		bailey_suspect 數字：執行懷疑值增減計算(撬開金庫增加、拿走金庫的錢增加、拿走金庫裡屬於自己的錢增加
+		bailey_suspect plus：用於顯示各行動懷疑值增加狀態，e.g.貝利懷疑+、貝利懷疑++
+	-->
+	<<if _args[0] is "init">>
+		<<if $bailey_suspect_value is undefined or $bailey_suspect_value lt 0>>
+			<<set $bailey_suspect_value to 0>>								<!--初始化貝利的懷疑值-->
+			<<if $bailey_suspect_value_init_date is undefined>>
+				<<set $bailey_suspect_value_init_date to Time.days - 28>>	<!--紀錄初始化時間用於後續計算-->
+			<</if>>	
+		<</if>>
+		<<set _bailey_suspect_value_init_date_pass to Time.days - $bailey_suspect_value_init_date>>	
+		<<for _i to _bailey_suspect_value_init_date_pass; _i gt 0; _i-->>
+			<<if _bailey_suspect_value_init_date_pass gte 28>>
+				<<set $bailey_suspect_value -= 10>>
+			<<elseif _bailey_suspect_value_init_date_pass gte 14>>
+				<<set $bailey_suspect_value -= 5>>
+			<<elseif _bailey_suspect_value_init_date_pass gte 7>>
+				<<set $bailey_suspect_value -= 1>>
+			<</if>>
+		<</for>>
+		<<set $bailey_suspect_value_init_date to Time.days>>
+	<<elseif _args[0] is "plus">>
+		<span class="red">貝利懷疑+</span>
+	<<elseif _args[0] is "pluss">>
+		<span class="red">貝利懷疑++</span>
+	<<elseif _args[0] is "plusss">>
+		<span class="red">貝利懷疑+++</span>
 	<<else>>
-		<<set _random_seed to random(1,10)>>									<!--產生隨機數給當前小金庫有多少錢-->
-		<<set _Baileys_money to Math.round(($Baileys_money / _random_seed))>> 	<!--取整數-->	
+		<<if _bailey_suspect_value_init_date_pass gte 28>>
+			<<set _args[0] *= 1>>
+		<<elseif _bailey_suspect_value_init_date_pass gte 14>>
+			<<set _args[0] *= 1.5>>
+		<<elseif _bailey_suspect_value_init_date_pass gte 7>>
+			<<set _args[0] *= 2>>
+		<<elseif _bailey_suspect_value_init_date_pass gt 3>>
+			<<set _args[0] *= 2.5>>	
+		<<elseif _bailey_suspect_value_init_date_pass lte 3>>
+			<<set _args[0] *= 3>>		
+		<</if>>	
+		<<set $bailey_suspect_value += _args[0]>>
 	<</if>>	
-	<<set $Tack_Baileys_money_init to Time.days>>							<!--鎖定金庫里錢的金額-->
-	
+<</widget>>
+
+<<widget "Baileys_piggy_banks_money_init">>  <!--初始化貝利小金庫裡的錢用widget-->
+    <<if $Baileys_piggy_banks_money_init_date isnot Time.days>>								<!--判斷今日是否初始化過小金庫的錢-->
+		<<if $Baileys_money lt 100>>											<!--防止計算後出現小於1的情況-->
+			<<set _Baileys_money to 1000>>
+			<<set $Baileys_money to 1000>>
+		<<else>>
+			<<set _random_seed to random(1,10)>>									<!--產生隨機數給當前小金庫有多少錢-->
+			<<set _Baileys_money to Math.round(($Baileys_money / _random_seed))>> 	<!--取整數-->	
+		<</if>>	
+		<<set $Baileys_piggy_banks_money_init_date to Time.days>>							<!--鎖定金庫里錢的金額-->
+	<</if>>	
+<</widget>>
+
+<<widget "rent_money_take_back">>
+	<<set _Baileys_money += $PC_rent_money_take_back>>
+	<<if $renttime gte 5 and $PC_rent_money_take_back isnot 0>>					<!--被貝利收租金三日內可取回-->
+		你在金庫裏發現了熟悉的東西，<span class="gold">那是你上繳給貝利的租金！</span><br>
+		<div id="rent_money_take_back">
+			你打算......：<br>
+			<<link "拿走">><<bailey_suspect "plusss">>
+				<<set $PC_rent_money_take_back to 0>>
+				<<stress -50>>
+				<<bailey_suspect 50>>
+				<<replace #rent_money_take_back>>失而復得的感覺非常好<<llstress>><<bailey_suspect "plusss">><</replace>>
+			<</link>>
+		</div>			
+	<</if>>
+	<br>
 <</widget>>
 
 <<widget "steal_Baileys_money">>		<!--顯示 撬開貝利的小金庫用 widget-->
-	<<if $visited_today isnot Time.days>>
-		<<lock_init>>		<!--小金庫上鎖狀態初始化-->
-	<</if>>
+	<<lock_init>>		<!--小金庫上鎖狀態初始化-->
 	
 	<<if $taken_Baileys_money isnot 0>>
 		你正蹲在貝利的小金庫前，你今日已經光顧過了，金庫裡連個銅板也沒給貝利留下來，改天再來吧！
@@ -81,7 +145,10 @@
 				<<set $lockpicking_tody to Time.days>>	<!--用於鎖定當日初始化參數，防止無限刷新-->
 				<<pass 10>>
 				<<crimeUp 20 "trespassing">>
-			<</link>><<crime "trespassing">> 
+				<<bailey_suspect 5>>
+			<</link>>
+			<<crime "trespassing">>
+			<<bailey_suspect "plus">>
 			<br>
 		<<elseif $lockpicking_tody is Time.days>> 
 			你正蹲在貝利的小金庫前，
@@ -91,9 +158,11 @@
 					<span class="gold"> 你學到一些詭術上的技巧。</span>
 					<<set $skulduggery += 10>>
 					<<set $lockpicking_tody_stage to Time.days>>		<!--鎖定今日已嘗試撬開金庫，防止無限刷詭術-->
+					<<bailey_suspect 10>>
+					<<bailey_suspect "plus">>
 				<</if>>
 				<br>
-				<<link [[拿走金庫里的錢|Tack Bailey's money]]>><<crimeUp 10 "thievery">><</link>><<crime "thievery">><br>
+				<<link [[拿走金庫里的錢|Tack Bailey's money]]>><</link>><<crime "thievery">><br>
 			<<else>>
 				<<if currentSkillValue('skulduggery') lt $lock and $lock lte 1000 and $unlock is 0>>
 					撬了半天，鎖一點也沒有撬開的跡象，你不得不承認
@@ -128,7 +197,7 @@
 <</widget>>
 
 <<widget "Baileys_piggy_banks_debug">>				<!--debug用-->
-	Baileys_money= <<printmoney $Baileys_money>><br>
+	貝利的存款= <<printmoney $Baileys_money>><br>
 	Baileys_money_PC=<<printmoney $Baileys_PC_rent_money>><br>
 	現在時間<<print Time.hour>>點 <br>
 	撬鎖難度：$lock <br>
@@ -138,7 +207,6 @@
 	<<else>>	
 		否<br>
 	<</if>>
-	lockpicking進度：$lockpicking_tody_stage <br>
 	上一次刷新貝利存款：$Baileys_money_init_date<br>
 	是否過了一週(刷新貝利存存款)？=
 	<<if Time.days gte $Baileys_money_refresh>>
@@ -150,7 +218,19 @@
 		Timedays= <<print Time.days>> <br>
 		Baileys_money_refresh= $Baileys_money_refresh<br>
 	<</if>>
-	遊戲開始過了<<print Time.days>>天 <br>		
+	貝利的懷疑值：$bailey_suspect_value<br>
+	bailey_suspect_value_init_date_pass=_bailey_suspect_value_init_date_pass<br>
+	遊戲開始過了<<print Time.days>>天 <br>
+	<<link [[金庫有玩家的上貢(DeBug)|$passage]]>>
+		<<set $PC_rent_money_take_back to 20000>>
+		<<set $renttime to 5>>
+	<</link>><br>
+		<<link [[金庫沒有玩家的上貢(DeBug)|$passage]]>>
+		<<set $PC_rent_money_take_back to 0>>
+	<</link>><br>
+	<<link [[強制低難度鎖(DeBug)|$passage]]>>
+		<<set $lock to 1>>
+	<</link>><br>	
 	<<link [[強制忘記鎖金庫(DeBug)|$passage]]>>
 		<<set $unlock to 1>>
 	<</link>><br>
@@ -164,7 +244,9 @@
 		<<unset $lockpicking_tody_stage >>
 		<<unset $Baileys_money_refresh>>
 		<<unset $unlock>>
-		<<unset $Tack_Baileys_money_init>>		
+		<<unset $Baileys_piggy_banks_money_init_date>>		
 		<<unset $taken_Baileys_money >>
+		<<unset $bailey_suspect_value>>
+		<<unset $bailey_suspect_value_init_date>>
 	<</link>><br>
 <</widget>>	

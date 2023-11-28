@@ -1,6 +1,7 @@
 :: Bailey's piggy_banks
 
-<<Baileys_money>>
+<<Baileys_money_init>>
+<<bailey_suspect init>>
 <<if Time.hour lt 6 >>
 	<<if $lockpicking_tody isnot Time.days>>
 		現在是半夜，也許你可以嘗試撬開貝利的小金庫？
