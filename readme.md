@@ -19,9 +19,10 @@
 ## 0.3.0  
 1.新增 貝利的懷疑值要素
 * (1)現在依然只是個數字，無具體作用  
-* (2)為未來劇情做準備  
+* (2)為未來劇情做準備
+
 2.升級至0.3.0需執行一次重置(使用言靈)  
-`<<link [[重置貝利的撲滿|$passage]]>>
+* `<<link [[重置貝利的撲滿|$passage]]>>
 <<unset $Baileys_money>>
 <<unset $Baileys_money_init_date>>
 <<unset $Baileys_PC_rent_money>>
