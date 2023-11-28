@@ -21,21 +21,21 @@
 * (1)現在依然只是個數字，無具體作用  
 * (2)為未來劇情做準備  
 2.升級至0.3.0需執行一次重置(使用言靈)  
-	<<link [[重置貝利的撲滿|$passage]]>>
-		<<unset $Baileys_money>>
-		<<unset $Baileys_money_init_date>>
-		<<unset $Baileys_PC_rent_money>>
-		<<unset $PC_rent_money_take_back>>		
-		<<unset $visited_today>>
-		<<unset $lockpicking_tody>>
-		<<unset $lockpicking_tody_stage >>
-		<<unset $Baileys_money_refresh>>
-		<<unset $unlock>>
-		<<unset $Tack_Baileys_money_init>>		
-		<<unset $taken_Baileys_money >>
-		<<unset $bailey_suspect_value>>
-		<<unset $bailey_suspect_value_init_date>>
-	<</link>>
+`<<link [[重置貝利的撲滿|$passage]]>>
+<<unset $Baileys_money>>
+<<unset $Baileys_money_init_date>>
+<<unset $Baileys_PC_rent_money>>
+<<unset $PC_rent_money_take_back>>
+<<unset $visited_today>>
+<<unset $lockpicking_tody>>
+<<unset $lockpicking_tody_stage >>
+<<unset $Baileys_money_refresh>>
+<<unset $unlock>>
+<<unset $Tack_Baileys_money_init>>
+<<unset $taken_Baileys_money >>
+<<unset $bailey_suspect_value>>
+<<unset $bailey_suspect_value_init_date>>
+<</link>>`  
 * 可透過
 [過作弊拓展][CE]
 開言靈或是使用其他類似MOD  
