@@ -1,40 +1,63 @@
 :: Widgets Bailey's piggy_banks [widget]
 
-<<widget "Baileys_money_init">>									<!--初始化貝利存款及刷新存款用widget-->
-	<<if $Baileys_money is undefined>> 								<!--第一次觸發事件初始化貝利存款-->
-		<<set $Baileys_money to random(50000, 100000) * random(30, 60)>> <!--(Time.days + random(30, 90)防止開新檔第0天就去撬金庫導致貝利存款為0-->
-		<<set $Baileys_money_refresh to Time.days +7>>		<!--下一次被利存款刷新日-->
-		<<set $Baileys_PC_rent_money to $rentmoney>>		<!--貝利打算收取的租金-->
-		<<set $Baileys_money_init_date to Time.days>>		<!--本次貝利存款刷新日，用於下次計算刷新-->
-		<<if $renttime gte 5 and Time.days gt 7>>			<!--被貝利收租金三日內可取回刷新，須至少被收取一次(被賣掉也算)-->
+<<widget "Baileys_money_init">>								<!--初始化貝利存款及刷新存款用widget-->
+	<<if $Baileys_money is undefined>> 						<!--第一次觸發事件初始化貝利存款-->
+	    <<set $Baileys_money to 0>>
+		<<set _Baileys_money_seed to random(30, 90)>>           <!--初始化貝利存款-->
+		<<for _i to _Baileys_money_seed; _i gt 0; _i-->>
+		    <<set $Baileys_money += random(50000, 100000)>> 
+		<</for>>
+		<<set $Baileys_money_refresh_date to Time.days +7>>		<!--下一次被利存款刷新日-->
+		<<set $Baileys_money_init_date to Time.days>>		    <!--本次貝利存款刷新日，用於下次計算刷新-->
+		<<if $renttime gte 5 and Time.days gte 7>>			    <!--被貝利收租金三日內可取回刷新，須至少被收取一次(被賣掉也算)-->
+			<<pc_money_takeback_init>>		            <!--貝利上周收取的租金-->
 			<<set $PC_rent_money_take_back to $Baileys_PC_rent_money>>	<!--被貝利收租金三日內可取回，金額初始化-->
 		<<else>>
 			<<set $PC_rent_money_take_back to 0>>
 		<</if>>	
 	<<else>>
-		<<if Time.days gte $Baileys_money_refresh >>				<!--七天後觸發更新貝利存款-->
+		<<if Time.days gte $Baileys_money_refresh_date >>				<!--七天後觸發更新貝利存款-->
 			<<set _Baileys_money_init_pass_temp to Time.days>>
 			<<set _Baileys_money_init_pass to _Baileys_money_init_pass_temp - $Baileys_money_init_date>>	<!--計算舉離上次刷新後過了多少天-->
 			<<for _i to _Baileys_money_init_pass; _i gt 0 ; _i-->>  
-				<<set _random_plus to random(0, 2)>>
-				<<if _random_plus lte 1>>											<!--貝利存款每日隨機增減-->
-					<<set $Baileys_money += Math.round(($Baileys_money * 0.05))>>
+				<<set _random_plus to random(0, 2)>>               <!--貝利存款每日隨機增減-->
+				<<if _random_plus lte 1>>
+				    <<set _Baileys_money_seed to random(1, 10)>>
+				    <<set _Baileys_money_seed *= 0.01>>											
+					<<set $Baileys_money += Math.round(($Baileys_money * _Baileys_money_seed))>>
 				<<else>>
-					<<set $Baileys_money -= Math.round(($Baileys_money * 0.1))>>
+				    <<set _Baileys_money_seed to random(1, 10)>>
+				    <<set _Baileys_money_seed *= 0.01>>
+					<<set $Baileys_money -= Math.round(($Baileys_money * _Baileys_money_seed))>>
 				<</if>>
 			<</for>>	
 			<<if $Baileys_money lte 0>>								<!--防止貝利的錢被偷光後無法再生-->
 				<<set $Baileys_money to random(50000, 100000) * random(30, 90)>>
 			<</if>>	
-			<<if $renttime gte 5 >>									<!--被貝利收租金三日內可取回刷新(被賣掉也算)-->
+			<<if $renttime gte 5 >>
+			    <<pc_money_takeback_init>>									<!--被貝利收租金三日內可取回刷新(被賣掉也算)-->
 				<<set $Baileys_money += $Baileys_PC_rent_money>>
 				<<set $PC_rent_money_take_back to $Baileys_PC_rent_money>>
 			<<else>>
-				<<set $Baileys_PC_rent_money to $rentmoney>>
+				<<set $PC_rent_money_take_back to 0>>
 			<</if>>	
-			<<set $Baileys_money_refresh to Time.days + 7>>			<!--設定下一次貝利存款刷新日-->
+			<<set $Baileys_money_refresh_date to Time.days + 7>>			<!--設定下一次貝利存款刷新日-->
 			<<set $Baileys_money_init_date to Time.days>>			<!--本次貝利存款刷新日，用於下次計算刷新-->
 		<</if>>
+	<</if>>	
+<</widget>>
+
+<<widget "pc_money_takeback_init">> <!--獲取上一次租金，兼容貝利瘋狂爆Pc金幣mod 1.2.0-->
+    <<if $rent_acc_mode is "t" and $Baileys_piggy_banks_acc gt 0>>
+        <<set $Baileys_PC_rent_money to $Baileys_piggy_banks_acc>>
+    <<else>> 
+        <<set _rentstage to $rentstage - 2>>  
+        <<set $Baileys_PC_rent_money to [10000,30000,50000,70000,100000,150000,200000][Math.clamp(_rentstage,0,6)]>>
+        <<set $Baileys_PC_rent_money to Math.floor($Baileys_PC_rent_money * $rentmod)>>
+	    <<if $robinpaid is 1>>
+		    <<set $Baileys_PC_rent_money *= 2>>
+	    <</if>>
+	    <<set $Baileys_PC_rent_money += ($babyRent or 0)>>
 	<</if>>	
 <</widget>>
 
@@ -81,11 +104,11 @@
 		<</for>>
 		<<set $bailey_suspect_value_init_date to Time.days>>
 	<<elseif _args[0] is "plus">>
-		<span class="red">|貝利懷疑+</span>
+		| <span class="red">貝利懷疑+</span>
 	<<elseif _args[0] is "pluss">>
-		<span class="red">|貝利懷疑++</span>
+		| <span class="red">貝利懷疑++</span>
 	<<elseif _args[0] is "plusss">>
-		<span class="red">|貝利懷疑+++</span>
+		| <span class="red">貝利懷疑+++</span>
 	<<else>>
 		<<if _bailey_suspect_value_init_date_pass gte 28>>
 			<<set _args[0] *= 1>>
@@ -108,7 +131,7 @@
 			<<set _Baileys_money to 1000>>
 			<<set $Baileys_money to 1000>>
 		<<else>>
-			<<set _random_seed to random(1,10)>>									<!--產生隨機數給當前小金庫有多少錢-->
+			<<set _random_seed to random(1,50)>>									<!--產生隨機數給當前小金庫有多少錢-->
 			<<set _Baileys_money to Math.round(($Baileys_money / _random_seed))>> 	<!--取整數-->	
 		<</if>>	
 		<<set $Baileys_piggy_banks_money_init_date to Time.days>>							<!--鎖定金庫里錢的金額-->
@@ -209,14 +232,14 @@
 	<</if>>
 	上一次刷新貝利存款：$Baileys_money_init_date<br>
 	是否過了一週(刷新貝利存存款)？=
-	<<if Time.days gte $Baileys_money_refresh>>
+	<<if Time.days gte $Baileys_money_refresh_date>>
 		是 <br>
 		Timedays= <<print Time.days>> <br>
-		Baileys_money_refresh= $Baileys_money_refresh<br>
+		Baileys_money_refresh_date= $Baileys_money_refresh_date<br>
 	<<else>>
 		否 <br>
 		Timedays= <<print Time.days>> <br>
-		Baileys_money_refresh= $Baileys_money_refresh<br>
+		Baileys_money_refresh_date= $Baileys_money_refresh_date<br>
 	<</if>>
 	貝利的懷疑值：$bailey_suspect_value<br>
 	bailey_suspect_value_init_date_pass=_bailey_suspect_value_init_date_pass<br>
@@ -242,7 +265,7 @@
 		<<unset $visited_today>>
 		<<unset $lockpicking_tody>>
 		<<unset $lockpicking_tody_stage >>
-		<<unset $Baileys_money_refresh>>
+		<<unset $Baileys_money_refresh_date>>
 		<<unset $unlock>>
 		<<unset $Baileys_piggy_banks_money_init_date>>		
 		<<unset $taken_Baileys_money >>
