@@ -1,16 +1,24 @@
-:: Bailey's piggy_banks
+:: Baileys piggy_banks
 
 <<Baileys_money_init>>
 <<bailey_suspect init>>
+<<set _random_seed to random(0,$bailey_suspect_value)>>
 <<if Time.hour lt 6 >>
-	<<if $lockpicking_tody isnot Time.days>>
-		現在是半夜，也許你可以嘗試撬開貝利的小金庫？
-		<<if $skulduggery lt 1000>>
-			<<gskulduggery>>
-		<</if>>
-		<br>
-	<</if>>	
-	<<steal_Baileys_money>>		<!--顯示 撬開貝利的小金庫-->
+    <<if _random_seed gte 1500 and $rng gte 50 >>
+        <span class="red">>被貝利發現了！！！</span><br>
+        待續（後續事件未完成）
+        
+    <<else>>
+	    <<if $lockpicking_tody isnot Time.days>>
+		    現在是半夜，也許你可以嘗試撬開貝利的小金庫？
+		    <<if $skulduggery lt 1000>>
+			    <<gskulduggery>>
+		    <</if>>
+		    <br>
+	    <</if>>	
+	    <<steal_Baileys_money>>		<!--顯示 撬開貝利的小金庫-->
+	    <<getouticon>><<link [[离开|Bailey's Office]]>><<endevent>><</link>><br>
+	<</if>>    
 <<else>>
 	<<if Time.hour gt 6 and Time.hour lt 10 >>
 		貝利就在旁邊呢！你不能明目張膽的撬開貝利的金庫而不被發現。<br>
@@ -18,9 +26,9 @@
 		現在是白天，你不能明目張膽的撬開貝利的金庫而不被發現，等夜深人靜後再來吧！<br>
 	<<elseif Time.hour gt 17 and Time.hour lte 23>>
 		就算天色已暗，你也不能明目張膽的撬開貝利的金庫而不被發現，等夜深人靜後再來吧！<br>
-	<</if>>	
+	<</if>>
+	<<getouticon>><<link [[离开|Bailey's Office]]>><<endevent>><</link>><br>	
 <</if>>
-<<getouticon>><<link [[离开|Bailey's Office]]>><<endevent>><</link>><br>
 
 <!--debug用-->
 <<if $debug is 1>> 

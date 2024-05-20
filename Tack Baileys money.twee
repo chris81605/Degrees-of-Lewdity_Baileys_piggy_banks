@@ -1,4 +1,4 @@
-:: Tack Bailey's money
+:: Tack Baileys money
 	
 <<Baileys_piggy_banks_money_init>> <!--初始化今日小金庫的錢-->
 <<rent_money_take_back>>

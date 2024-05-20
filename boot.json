@@ -1,6 +1,6 @@
 {
   "name": "Bailey's piggy_banks",
-  "version": "0.3.1",
+  "version": "0.4.1",
   "styleFileList": [],
   "scriptFileList": [],
   "tweeFileList": [
@@ -25,7 +25,7 @@
         {
           "passage": "Bailey's Office",
           "findString": "<<if _options isnot 2>>",
-          "replace": "<<lockpickicon>><<link [[查看貝利的小金庫|Bailey's piggy_banks]]>><</link>><br>\n<<if _options isnot 2>>"
+          "replace": "<<lockpickicon>><<link [[查看貝利的小金庫|Baileys piggy_banks]]>><</link>><br>\n<<if _options isnot 2>>"
         }
       ]
     }

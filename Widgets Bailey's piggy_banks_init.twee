@@ -1,0 +1,166 @@
+:: Widgets Baileys piggy_banks_init [widget]
+
+<<widget "Baileys_money_init">>								<!--初始化貝利存款及刷新存款用widget-->
+	<<if $Baileys_money is undefined>> 						<!--第一次觸發事件初始化貝利存款-->
+	    <<set $Baileys_money to 0>>
+		<<set _Baileys_money_seed to random(30, 90)>>           <!--初始化貝利存款-->
+		<<for _i to _Baileys_money_seed; _i gt 0; _i-->>
+		    <<set $Baileys_money += random(50000, 100000)>> 
+		<</for>>
+		<<set $Baileys_money_refresh_date to Time.days +7>>		<!--下一次被利存款刷新日-->
+		<<set $Baileys_money_init_date to Time.days>>		    <!--本次貝利存款刷新日，用於下次計算刷新-->
+		<<if $renttime gte 5 and Time.days gte 7>>			    <!--被貝利收租金三日內可取回刷新，須至少被收取一次(被賣掉也算)-->
+			<<pc_money_takeback_init>>		            <!--貝利上周收取的租金-->
+			<<set $PC_rent_money_take_back to $Baileys_PC_rent_money>>	<!--被貝利收租金三日內可取回，金額初始化-->
+		<<else>>
+			<<set $PC_rent_money_take_back to 0>>
+		<</if>>	
+	<<else>>
+		<<if Time.days gte $Baileys_money_refresh_date >>				<!--七天後觸發更新貝利存款-->
+			<<set _Baileys_money_init_pass_temp to Time.days>>
+			<<set _Baileys_money_init_pass to _Baileys_money_init_pass_temp - $Baileys_money_init_date>>	<!--計算舉離上次刷新後過了多少天-->
+			<<for _i to _Baileys_money_init_pass; _i gt 0 ; _i-->>  
+				<<set _random_plus to random(0, 2)>>               <!--貝利存款每日隨機增減-->
+				<<if _random_plus lte 1>>
+				    <<set _Baileys_money_seed to random(1, 10)>>
+				    <<set _Baileys_money_seed *= 0.01>>											
+					<<set $Baileys_money += Math.round(($Baileys_money * _Baileys_money_seed))>>
+				<<else>>
+				    <<set _Baileys_money_seed to random(1, 10)>>
+				    <<set _Baileys_money_seed *= 0.01>>
+					<<set $Baileys_money -= Math.round(($Baileys_money * _Baileys_money_seed))>>
+				<</if>>
+			<</for>>	
+			<<if $Baileys_money lte 0>>								<!--防止貝利的錢被偷光後無法再生-->
+				<<set $Baileys_money to random(50000, 100000) * random(30, 90)>>
+			<</if>>	
+			<<if $renttime gte 5 >>
+			    <<pc_money_takeback_init>>									<!--被貝利收租金三日內可取回刷新(被賣掉也算)-->
+				<<set $Baileys_money += $Baileys_PC_rent_money>>
+				<<set $PC_rent_money_take_back to $Baileys_PC_rent_money>>
+			<<else>>
+				<<set $PC_rent_money_take_back to 0>>
+			<</if>>	
+			<<set $Baileys_money_refresh_date to Time.days + 7>>			<!--設定下一次貝利存款刷新日-->
+			<<set $Baileys_money_init_date to Time.days>>			<!--本次貝利存款刷新日，用於下次計算刷新-->
+		<</if>>
+	<</if>>	
+<</widget>>
+
+<!--獲取上一次租金
+<<widget "pc_money_takeback_init">> 
+    <<if $rent_acc_mode is "t" and $Baileys_piggy_banks_acc gt 0>>
+        <<set $Baileys_PC_rent_money to $Baileys_piggy_banks_acc>>
+    <<else>> 
+        <<set _rentstage to $rentstage - 2>>  
+        <<set $Baileys_PC_rent_money to [10000,30000,50000,70000,100000,150000,200000][Math.clamp(_rentstage,0,6)]>>
+        <<set $Baileys_PC_rent_money to Math.floor($Baileys_PC_rent_money * $rentmod)>>
+	    <<if $robinpaid is 1>>
+		    <<set $Baileys_PC_rent_money *= 2>>
+	    <</if>>
+	    <<set $Baileys_PC_rent_money += ($babyRent or 0)>>
+	<</if>>	
+<</widget>>
+-->
+
+<<widget "pc_money_takeback_init">>
+    <<if $rent_acc_mode is "t" and $renttime gte 0 and $rentmoney_accumulation gt 0>>
+        <<set $Baileys_PC_rent_money to $rentmoney_accumulation>>
+    <<else>> 
+        <<set _rentstage to $rentstage - 2>>  
+        <<set $Baileys_PC_rent_money to [10000,30000,50000,70000,100000,150000,200000][Math.clamp(_rentstage,0,6)]>>
+        <<set $Baileys_PC_rent_money to Math.floor($Baileys_PC_rent_money * $rentmod)>>
+	    <<if $robinpaid is 1>>
+		    <<set $Baileys_PC_rent_money *= 2>>
+	    <</if>>
+	    <<set $Baileys_PC_rent_money += ($babyRent or 0)>>
+	<</if>>	
+<</widget>>
+
+<<widget "lock_init">>					<!--小金庫上鎖狀態初始化用 widget-->
+	<<if $visited_today isnot Time.days>>
+		<<set $lock to random(400, 1000)>>	<!--初始化解鎖難度-->
+		<<set $unlock to 0>>				<!--初始化今日貝利是否忘記上鎖-->
+		<<set $taken_Baileys_money to 0>>	<!--初始化拿過貝利的錢-->
+		<<set $visited_today to Time.days>> <!--用於鎖定今日的撬鎖難度-->
+		<<set $lockpicking_tody_stage to 0>> <!--用於初始化嘗試撬開金庫，防止無限刷詭術-->
+		<<set _random_seed to 1002>>		<!--計算忘記上鎖機率，待優化-->
+		<<if $rng lte 50 >>				
+			<<set _random_seed to (_random_seed - $skulduggery)>>
+			<<set _random_unlock to (1, _random_seed)>>
+			<<if _random_unlock lte 1 >>
+				<<set $unlock to 1>>	
+			<</if>> 	
+		<</if>>
+	<</if>>	
+<</widget>>	
+
+<<widget "bailey_suspect">>												<!--貝利的懷疑值計算及初始化用widget-->
+	<!--用法：
+		bailey_suspect init：執行初始化，計算每日懷疑值(懷疑值隨時間下降)
+		bailey_suspect 數字：執行懷疑值增減計算(撬開金庫增加、拿走金庫的錢增加、拿走金庫裡屬於自己的錢增加
+		bailey_suspect plus：用於顯示各行動懷疑值增加狀態，e.g.貝利懷疑+、貝利懷疑++
+	-->
+	<<if _args[0] is "init">>
+		<<if $bailey_suspect_value is undefined or $bailey_suspect_value lt 0>>
+			<<set $bailey_suspect_value to 0>>								<!--初始化貝利的懷疑值-->
+			<<if $bailey_suspect_value_init_date is undefined>>
+				<<set $bailey_suspect_value_init_date to Time.days - 28>>	<!--紀錄初始化時間用於後續計算-->
+			<</if>>	
+		<</if>>
+		<<set _bailey_suspect_value_init_date_pass to Time.days - $bailey_suspect_value_init_date>>	
+		<<for _i to _bailey_suspect_value_init_date_pass; _i gt 0; _i-->>
+			<<if _bailey_suspect_value_init_date_pass gte 28>>
+				<<set $bailey_suspect_value -= 10>>
+			<<elseif _bailey_suspect_value_init_date_pass gte 14>>
+				<<set $bailey_suspect_value -= 5>>
+			<<elseif _bailey_suspect_value_init_date_pass gte 7>>
+				<<set $bailey_suspect_value -= 1>>
+			<</if>>
+		<</for>>
+		<<if $bailey_suspect_value lt 0>>
+		    <<set $bailey_suspect_value to 0>>
+		<</if>>    
+		<<set $bailey_suspect_value_init_date to Time.days>>
+		
+	<<elseif _args[0] is "plus">>
+		| <span class="red">貝利懷疑+</span>
+	<<elseif _args[0] is "pluss">>
+		| <span class="red">貝利懷疑++</span>
+	<<elseif _args[0] is "plusss">>
+		| <span class="red">貝利懷疑+++</span>
+	<<else>>
+		<<if _bailey_suspect_value_init_date_pass gte 28>>
+			<<set _args[0] *= 1>>
+		<<elseif _bailey_suspect_value_init_date_pass gte 14>>
+			<<set _args[0] *= 1.5>>
+		<<elseif _bailey_suspect_value_init_date_pass gte 7>>
+			<<set _args[0] *= 2>>
+		<<elseif _bailey_suspect_value_init_date_pass gt 3>>
+			<<set _args[0] *= 2.5>>	
+		<<elseif _bailey_suspect_value_init_date_pass lte 3>>
+			<<set _args[0] *= 3>>		
+		<</if>>	
+		<<set $bailey_suspect_value += _args[0]>>
+		<<if $bailey_suspect_value gt 2000>>
+		    <<set $bailey_suspect_value to 2000>>
+		<</if>>
+	<</if>>	
+<</widget>>
+
+<<widget "Baileys_piggy_banks_money_init">>  <!--初始化貝利小金庫裡的錢用widget-->
+    <<if $Baileys_piggy_banks_money_init_date isnot Time.days>>								<!--判斷今日是否初始化過小金庫的錢-->
+		<<if $Baileys_money lt 100>>											<!--防止計算後出現小於1的情況-->
+			<<set _Baileys_money to 1000>>
+			<<set $Baileys_money to 1000>>
+		<<else>>
+			<<set _random_seed to random(1,50)>>									<!--產生隨機數給當前小金庫有多少錢-->
+			<<set _Baileys_money to Math.round(($Baileys_money / _random_seed))>> 	<!--取整數-->
+			<<if $bailey_suspect_value gte 500>>
+			    <<set _seed to Math.round(($bailey_suspect_value / 20))>>
+			    <<set _Baileys_money to Math.round((_Baileys_money / _seed))>>
+			<</if>>   
+		<</if>>	
+		<<set $Baileys_piggy_banks_money_init_date to Time.days>>							<!--鎖定金庫里錢的金額-->
+	<</if>>	
+<</widget>>
