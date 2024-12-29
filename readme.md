@@ -1,3 +1,6 @@
+# 公告  
+## 2024/12/29 `貝利小金庫`即將與`貝利瘋狂Pc爆金幣`模組合併，目前倆模組代碼皆在重構中，最新消息請查看DC[`DOL汉化交流`](https://discord.gg/NBk4EtrS)/`DOL模组相关`板塊(測試版已發佈）
+
 # Degrees-of-Lewdity
 - <img decoding="async" src="https://gitgud.io/uploads/-/system/user/avatar/9096/avatar.png" width="24" alt=""> <b>遊戲作者</b> $\color{purple} {Vrelnir}$
   - [Vrelnir 的blog][blog]
